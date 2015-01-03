@@ -1,19 +1,15 @@
 <?php
 
-/*
-    EmailAddressValidator Class
-    http://code.google.com/p/php-email-address-validation/
-
-    Released under New BSD license
-    http://www.opensource.org/licenses/bsd-license.php
-
-    Sample Code
-    ----------------
-    if (EmailAddressValidator::checkEmailAddress('test@example.org')) {
-        // Email address is technically valid
-    }
-*/
-
+/**
+ * Class EmailAddressValidator
+ *
+ * @link https://github.com/aziraphale/email-address-validator
+ * @link http://code.google.com/p/php-email-address-validation/
+ * @license New BSD license http://www.opensource.org/licenses/bsd-license.php
+ * @example if (EmailAddressValidator::checkEmailAddress('test@example.org')) {
+ * @example     // Email address is technically valid
+ * @example }
+ */
 class EmailAddressValidator
 {
     /**
