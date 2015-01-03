@@ -83,7 +83,7 @@ class EmailAddressValidator
      * @param string $localPortion Text to be checked
      * @return bool Whether local portion is valid
      */
-    protected static function checkLocalPortion($localPortion)
+    public static function checkLocalPortion($localPortion)
     {
         // Local portion can only be from 1 to 64 characters, inclusive.
         // Please note that servers are encouraged to accept longer local
@@ -115,7 +115,7 @@ class EmailAddressValidator
      * @param string $domainPortion Text to be checked
      * @return bool Whether domain portion is valid
      */
-    protected static function checkDomainPortion($domainPortion)
+    public static function checkDomainPortion($domainPortion)
     {
         // Total domain can only be from 1 to 255 characters, inclusive
         if (!self::checkTextLength($domainPortion, 1, 255)) {
