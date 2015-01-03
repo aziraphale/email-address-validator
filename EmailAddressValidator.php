@@ -165,10 +165,6 @@ class EmailAddressValidator
     {
         // Minimum and maximum are both inclusive
         $textLength = strlen($text);
-        if (($textLength < $minimum) || ($textLength > $maximum)) {
-            return false;
-        } else {
-            return true;
-        }
+        return ($textLength >= $minimum && $textLength <= $maximum);
     }
 }
