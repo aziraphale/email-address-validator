@@ -19,59 +19,59 @@ class EmailAddressValidator
 {
     /**
      * Check email address validity
-     * @param string $strEmailAddress Email address to be checked
+     * @param string $emailAddress Email address to be checked
      * @return bool Whether email is valid
      */
-    public function check_email_address($strEmailAddress)
+    public function check_email_address($emailAddress)
     {
         // If magic quotes is "on", email addresses with quote marks will
         // fail validation because of added escape characters. Uncommenting
         // the next three lines will allow for this issue.
         //if (get_magic_quotes_gpc()) {
-        //    $strEmailAddress = stripslashes($strEmailAddress);
+        //    $emailAddress = stripslashes($emailAddress);
         //}
 
         // Control characters are not allowed
-        if (preg_match('/[\x00-\x1F\x7F-\xFF]/', $strEmailAddress)) {
+        if (preg_match('/[\x00-\x1F\x7F-\xFF]/', $emailAddress)) {
             return false;
         }
 
         // Check email length - min 3 (a@a), max 256
-        if (!$this->check_text_length($strEmailAddress, 3, 256)) {
+        if (!$this->check_text_length($emailAddress, 3, 256)) {
             return false;
         }
 
         // Split it into sections using last instance of "@"
-        $intAtSymbol = strrpos($strEmailAddress, '@');
-        if ($intAtSymbol === false) {
+        $atSymbol = strrpos($emailAddress, '@');
+        if ($atSymbol === false) {
             // No "@" symbol in email.
             return false;
         }
-        $arrEmailAddress[0] = substr($strEmailAddress, 0, $intAtSymbol);
-        $arrEmailAddress[1] = substr($strEmailAddress, $intAtSymbol + 1);
+        $emailAddressParts[0] = substr($emailAddress, 0, $atSymbol);
+        $emailAddressParts[1] = substr($emailAddress, $atSymbol + 1);
 
         // Count the "@" symbols. Only one is allowed, except where
         // contained in quote marks in the local part. Quickest way to
         // check this is to remove anything in quotes. We also remove
         // characters escaped with backslash, and the backslash
         // character.
-        $arrTempAddress[0] = preg_replace('/\./', '', $arrEmailAddress[0]);
-        $arrTempAddress[0] = preg_replace('/"[^"]+"/', '', $arrTempAddress[0]);
-        $arrTempAddress[1] = $arrEmailAddress[1];
-        $strTempAddress = $arrTempAddress[0] . $arrTempAddress[1];
+        $tempAddressParts[0] = preg_replace('/\./', '', $emailAddressParts[0]);
+        $tempAddressParts[0] = preg_replace('/"[^"]+"/', '', $tempAddressParts[0]);
+        $tempAddressParts[1] = $emailAddressParts[1];
+        $tempAddress = $tempAddressParts[0] . $tempAddressParts[1];
         // Then check - should be no "@" symbols.
-        if (strrpos($strTempAddress, '@') !== false) {
+        if (strrpos($tempAddress, '@') !== false) {
             // "@" symbol found
             return false;
         }
 
         // Check local portion
-        if (!$this->check_local_portion($arrEmailAddress[0])) {
+        if (!$this->check_local_portion($emailAddressParts[0])) {
             return false;
         }
 
         // Check domain portion
-        if (!$this->check_domain_portion($arrEmailAddress[1])) {
+        if (!$this->check_domain_portion($emailAddressParts[1])) {
             return false;
         }
 
@@ -81,30 +81,30 @@ class EmailAddressValidator
 
     /**
      * Checks email section before "@" symbol for validity
-     * @param string $strLocalPortion Text to be checked
+     * @param string $localPortion Text to be checked
      * @return bool Whether local portion is valid
      */
-    protected function check_local_portion($strLocalPortion)
+    protected function check_local_portion($localPortion)
     {
         // Local portion can only be from 1 to 64 characters, inclusive.
         // Please note that servers are encouraged to accept longer local
         // parts than 64 characters.
-        if (!$this->check_text_length($strLocalPortion, 1, 64)) {
+        if (!$this->check_text_length($localPortion, 1, 64)) {
             return false;
         }
         // Local portion must be:
         // 1) a dot-atom (strings separated by periods)
         // 2) a quoted string
         // 3) an obsolete format string (combination of the above)
-        $arrLocalPortion = explode('.', $strLocalPortion);
-        for ($i = 0, $max = sizeof($arrLocalPortion); $i < $max; $i++) {
+        $localPortionParts = explode('.', $localPortion);
+        for ($i = 0, $max = sizeof($localPortionParts); $i < $max; $i++) {
              if (!preg_match('.^('
                             .    '([A-Za-z0-9!#$%&\'*+/=?^_`{|}~-]'
                             .    '[A-Za-z0-9!#$%&\'*+/=?^_`{|}~-]{0,63})'
                             .'|'
                             .    '("[^\\\"]{0,62}")'
                             .')$.'
-                            ,$arrLocalPortion[$i])) {
+                            ,$localPortionParts[$i])) {
                 return false;
             }
         }
@@ -113,39 +113,39 @@ class EmailAddressValidator
 
     /**
      * Checks email section after "@" symbol for validity
-     * @param string $strDomainPortion Text to be checked
+     * @param string $domainPortion Text to be checked
      * @return bool Whether domain portion is valid
      */
-    protected function check_domain_portion($strDomainPortion)
+    protected function check_domain_portion($domainPortion)
     {
         // Total domain can only be from 1 to 255 characters, inclusive
-        if (!$this->check_text_length($strDomainPortion, 1, 255)) {
+        if (!$this->check_text_length($domainPortion, 1, 255)) {
             return false;
         }
         // Check if domain is IP, possibly enclosed in square brackets.
         if (preg_match('/^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])'
            .'(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}$/',
-                $strDomainPortion) ||
+                $domainPortion) ||
             preg_match('/^\[(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])'
            .'(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}\]$/',
-                $strDomainPortion)) {
+                $domainPortion)) {
             return true;
         } else {
-            $arrDomainPortion = explode('.', $strDomainPortion);
-            if (sizeof($arrDomainPortion) < 2) {
+            $domainPortionParts = explode('.', $domainPortion);
+            if (sizeof($domainPortionParts) < 2) {
                 return false; // Not enough parts to domain
             }
-            for ($i = 0, $max = sizeof($arrDomainPortion); $i < $max; $i++) {
+            for ($i = 0, $max = sizeof($domainPortionParts); $i < $max; $i++) {
                 // Each portion must be between 1 and 63 characters, inclusive
-                if (!$this->check_text_length($arrDomainPortion[$i], 1, 63)) {
+                if (!$this->check_text_length($domainPortionParts[$i], 1, 63)) {
                     return false;
                 }
                 if (!preg_match('/^(([A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9])|'
-                   .'([A-Za-z0-9]+))$/', $arrDomainPortion[$i])) {
+                   .'([A-Za-z0-9]+))$/', $domainPortionParts[$i])) {
                     return false;
                 }
                 if ($i == $max - 1) { // TLD cannot be only numbers
-                    if (strlen(preg_replace('/[0-9]/', '', $arrDomainPortion[$i])) <= 0) {
+                    if (strlen(preg_replace('/[0-9]/', '', $domainPortionParts[$i])) <= 0) {
                         return false;
                     }
                 }
@@ -156,16 +156,16 @@ class EmailAddressValidator
 
     /**
      * Check given text length is between defined bounds
-     * @param string $strText Text to be checked
-     * @param int $intMinimum Minimum acceptable length
-     * @param int $intMaximum Maximum acceptable length
+     * @param string $text Text to be checked
+     * @param int $minimum Minimum acceptable length
+     * @param int $maximum Maximum acceptable length
      * @return bool Whether string is within bounds (inclusive)
      */
-    protected function check_text_length($strText, $intMinimum, $intMaximum)
+    protected function check_text_length($text, $minimum, $maximum)
     {
         // Minimum and maximum are both inclusive
-        $intTextLength = strlen($strText);
-        if (($intTextLength < $intMinimum) || ($intTextLength > $intMaximum)) {
+        $textLength = strlen($text);
+        if (($textLength < $minimum) || ($textLength > $maximum)) {
             return false;
         } else {
             return true;
