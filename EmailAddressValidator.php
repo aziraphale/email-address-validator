@@ -10,7 +10,7 @@
     Sample Code
     ----------------
     $validator = new EmailAddressValidator;
-    if ($validator->check_email_address('test@example.org')) {
+    if ($validator->checkEmailAddress('test@example.org')) {
         // Email address is technically valid
     }
 */
@@ -22,7 +22,7 @@ class EmailAddressValidator
      * @param string $emailAddress Email address to be checked
      * @return bool Whether email is valid
      */
-    public function check_email_address($emailAddress)
+    public function checkEmailAddress($emailAddress)
     {
         // If magic quotes is "on", email addresses with quote marks will
         // fail validation because of added escape characters. Uncommenting
@@ -37,7 +37,7 @@ class EmailAddressValidator
         }
 
         // Check email length - min 3 (a@a), max 256
-        if (!$this->check_text_length($emailAddress, 3, 256)) {
+        if (!$this->checkTextLength($emailAddress, 3, 256)) {
             return false;
         }
 
@@ -66,12 +66,12 @@ class EmailAddressValidator
         }
 
         // Check local portion
-        if (!$this->check_local_portion($emailAddressParts[0])) {
+        if (!$this->checkLocalPortion($emailAddressParts[0])) {
             return false;
         }
 
         // Check domain portion
-        if (!$this->check_domain_portion($emailAddressParts[1])) {
+        if (!$this->checkDomainPortion($emailAddressParts[1])) {
             return false;
         }
 
@@ -84,12 +84,12 @@ class EmailAddressValidator
      * @param string $localPortion Text to be checked
      * @return bool Whether local portion is valid
      */
-    protected function check_local_portion($localPortion)
+    protected function checkLocalPortion($localPortion)
     {
         // Local portion can only be from 1 to 64 characters, inclusive.
         // Please note that servers are encouraged to accept longer local
         // parts than 64 characters.
-        if (!$this->check_text_length($localPortion, 1, 64)) {
+        if (!$this->checkTextLength($localPortion, 1, 64)) {
             return false;
         }
         // Local portion must be:
@@ -116,10 +116,10 @@ class EmailAddressValidator
      * @param string $domainPortion Text to be checked
      * @return bool Whether domain portion is valid
      */
-    protected function check_domain_portion($domainPortion)
+    protected function checkDomainPortion($domainPortion)
     {
         // Total domain can only be from 1 to 255 characters, inclusive
-        if (!$this->check_text_length($domainPortion, 1, 255)) {
+        if (!$this->checkTextLength($domainPortion, 1, 255)) {
             return false;
         }
         // Check if domain is IP, possibly enclosed in square brackets.
@@ -137,7 +137,7 @@ class EmailAddressValidator
             }
             for ($i = 0, $max = sizeof($domainPortionParts); $i < $max; $i++) {
                 // Each portion must be between 1 and 63 characters, inclusive
-                if (!$this->check_text_length($domainPortionParts[$i], 1, 63)) {
+                if (!$this->checkTextLength($domainPortionParts[$i], 1, 63)) {
                     return false;
                 }
                 if (!preg_match('/^(([A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9])|'
@@ -161,7 +161,7 @@ class EmailAddressValidator
      * @param int $maximum Maximum acceptable length
      * @return bool Whether string is within bounds (inclusive)
      */
-    protected function check_text_length($text, $minimum, $maximum)
+    protected function checkTextLength($text, $minimum, $maximum)
     {
         // Minimum and maximum are both inclusive
         $textLength = strlen($text);
