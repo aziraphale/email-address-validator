@@ -82,4 +82,14 @@ class EmailAddressValidatorTest extends PHPUnit_Framework_TestCase
         $result = EmailAddressValidator::checkEmailAddress($email);
         $this->assertSame($isvalid, $result);
     }
+
+    /**
+     * Local domain emails should be allowed when the appropriate parameter is set
+     *
+     * @link https://code.google.com/archive/p/php-email-address-validation/issues/15
+     */
+    public function testLocal() {
+        $this->assertFalse(EmailAddressValidator::checkEmailAddress('test@example'));
+        $this->assertTrue(EmailAddressValidator::checkEmailAddress('test@example', true));
+    }
 }
