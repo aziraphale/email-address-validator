@@ -66,6 +66,9 @@ class EmailAddressValidatorTest extends PHPUnit_Framework_TestCase
             array('bu[g]s@php.net1', false),
             array('somebody@somewhere.museum', true),
             array('somebody@somewhere.travel', true),
+
+            // https://code.google.com/archive/p/php-email-address-validation/issues/12
+            array('root@[2010:fb:fdac::311:2101]', true),
         );
     }
 
