@@ -1,6 +1,6 @@
 {
     "name": "aziraphale/email-address-validator",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Fork of AddedBytes' PHP EmailAddressValidator script, now with Composer support!",
     "homepage": "https://github.com/aziraphale/email-address-validator",
     "license": "MIT",
