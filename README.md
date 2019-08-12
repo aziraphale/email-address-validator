@@ -53,7 +53,7 @@ with a couple of additional methods in case they're helpful:
 if (EmailAddressValidator::checkLocalPortion("test")) {
     // "test" is technically a valid string to have before the "@" in an email address
 }
-if (EmailAddressValidator::checkDomainPotion("example.org")) {
+if (EmailAddressValidator::checkDomainPortion("example.org")) {
     // "example.org" is technically a valid email address host
 }
 ```
